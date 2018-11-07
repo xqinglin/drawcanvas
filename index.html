@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body>
+    <div>
+        1:the up and down Arrow is not working
+        2:in phone, the screen swap with finger, does it matter?  
+      </div>
+  <canvas id="myCanvas" width="800" height="500"></canvas>
+  <div>
+  <div>
+    Color: 
+    <select id=color>
+      <option id="blue" value="blue">blue</option>
+      <option id="green" value="green">green</option>
+      <option id="red" value="red">red</option>
+      <option id="yellow" value="yellow">yellow</option>
+    </select>
+  </div>
+<div>
+    Pen Size:<span id='penSize'>5</span>
+    <button><i class="fas fa-arrow-up" id='up'></i></button>
+    <button><i class="fas fa-arrow-down" id='down'></i></button>  
+</div>
+
+    <button id='clearAll'>Clear All <i class="fas fa-broom"></i></button>
+  </div>
+    <script>
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+      function draw(canvas,mousePos) {
+        var context = canvas.getContext('2d');   
+        var penColor= document.getElementById('color').value;
+        var penSize= document.getElementById('penSize').innerText;
+        context.font = '18pt Calibri';
+        context.fillStyle = penColor;
+        context.beginPath();
+        context.arc(mousePos.x, mousePos.y, penSize, 0, 2 * Math.PI,true);
+        context.fill();
+      }
+      function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }    
+      canvas.addEventListener('mousemove', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+        var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+        
+        draw(canvas, mousePos);
+      }, false);
+      
+      canvas.addEventListener("touchmove", function (e) {
+        var touch = e.touches[0];
+        var mouseEvent = new MouseEvent("mousemove", {
+          clientX: touch.clientX,
+          clientY: touch.clientY
+        });
+        canvas.dispatchEvent(mouseEvent);
+      }, false);
+      
+      document.getElementById('clearAll').addEventListener('click', function(){
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      });
+      document.getElementById('up').addEventListener('click', function(){
+        var temp = document.getElementById('penSize').innerText
+        document.getElementById('penSize').innerText = parseInt(temp)+3;
+      });
+      document.getElementById('down').addEventListener('click', function(){
+        var temp = document.getElementById('penSize').innerText
+        document.getElementById('penSize').innerText = parseInt(temp)-3;
+      });
+      window.addEventListener('keypress', function (e) {
+        if(e.key== 'b'){
+          document.getElementById('color').value = 'blue';
+        }else if(e.key == 'g'){
+          document.getElementById('color').value = 'green';
+        }else if(e.key == 'y'){
+          document.getElementById('color').value = 'yellow';
+        }else if(e.key == 'r'){
+          document.getElementById('color').value = 'red';
+        }else if(e.key === ' ' || e.key === 'Spacebar'){
+          context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }, false);
+      document.onkeydown = function(e){
+        var temp = document.getElementById('penSize').innerText
+        if(e.keyCode === 38 || e.key ==='upArrow'){
+          document.getElementById('penSize').innerText = parseInt(temp)+3;
+        }else if(e.keyCode == 40){
+          document.getElementById('penSize').innerText = parseInt(temp)-3;
+        }
+      }
+    </script>
+</body>
+</html>
